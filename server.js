@@ -99,6 +99,7 @@ app.post('/login', async (req, res) => {
     }
 });
 
+//profile
 app.get('/profile', auth.isLoggedIn, (req, res) => {
     try{
         if(req.userFound) {
@@ -114,8 +115,77 @@ app.get('/profile', auth.isLoggedIn, (req, res) => {
     } catch(error) {
         res.send("User not found");
     };
-    
 });
+
+//edit
+app.get('/edit', auth.isLoggedIn, (req, res) => {
+    res.render('edit',{
+        name: req.userFound.name,
+        email: req.userFound.email 
+    });
+});
+
+app.post('/edit', auth.isLoggedIn, async (req, res) => {
+    // console.log(req.userFound._id)
+    try{
+        await User.findByIdAndUpdate(req.userFound._id, {
+            name: req.body.userName,
+            email: req.body.userEmail,
+        });
+        res.send("User has been updated");
+    } catch(error) {
+        res.send("That user does not exist");
+    };
+});
+
+//edit password
+app.get('/password', auth.isLoggedIn, (req, res) => {
+    res.render('password');
+});
+
+app.post('/password', auth.isLoggedIn, async (req, res) => {
+    const isMatch = await bcrypt.compare(req.body.oldPassword, req.userFound.password );
+    console.log(isMatch);
+    if (isMatch) {
+        console.log("match");
+        if (req.body.newPassword !== req.body.confirmPassword) {
+            console.log("no Match");
+            res.render("password", {
+                error: "The passwords do not match"
+            })
+        } else {
+            console.log("changing");
+            const hashedPassword = await bcrypt.hash(req.body.newPassword, 13);
+            await User.findByIdAndUpdate(req.userFound._id, {
+                password: hashedPassword
+            });
+        res.send("password changed") 
+        }
+    } else {
+        res.send("Password incorrect");
+    }
+});
+
+//delete
+app.get('/delete', auth.isLoggedIn, async (req, res) => {
+    try{
+        await User.findByIdAndDelete(req.userFound._id);
+        res.send("User has been deleted");
+    } catch(error) {
+        res.send("That user does not exist");
+    };
+});
+
+//create
+app.get('/create', auth.isLoggedIn, (req, res) => {
+    res.render('create');
+});
+
+//view
+app.get('/view', auth.isLoggedIn, (req, res) => {
+    res.render('view');
+});
+
 
 
 //error handling
