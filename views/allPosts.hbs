@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Blog Posts</h1>
+    <div>
+        <table>
+            <tr>
+                <th>Title</th>
+                <th>Preview</th>
+                <th>Author</th>
+                <th>Created</th>
+            </tr>
+
+            {{#each allPosts}}
+            <tr>
+                <td>{{this.title}}</td>
+                <td>{{this.body}}</td>
+                <td>{{this.user}}</td>
+                <td>{{this.createdAt}}</td>
+            </tr>
+            {{/each}}
+
+        </table>
+    </div>
+
+</body>
+</html>

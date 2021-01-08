@@ -191,9 +191,17 @@ app.post('/create', auth.isLoggedIn, async (req, res) => {
     res.send("Post Created");
 });
 
-//view
-app.get('/view', auth.isLoggedIn, (req, res) => {
-    res.render('view');
+//userPosts
+app.get('/userPosts', auth.isLoggedIn, (req, res) => {
+    res.render('userPosts');
+});
+
+//allPosts
+app.get('/allPosts', auth.isLoggedIn, async (req, res) => {
+    const allPosts = await Blogpost.find();
+    res.render('allPosts', {
+        allPosts: allPosts
+    });
 });
 
 
