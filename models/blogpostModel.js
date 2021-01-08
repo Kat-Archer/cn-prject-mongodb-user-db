@@ -5,21 +5,17 @@ const blogpost = new mongoose.Schema({
         type: String,
         required: true
     },
-    // date: {
-    //     type: Date,
-    //     default: new Date() //creates as current date
-    // },
     body: {
         type: String,
         required: true
     },
     user: {
-        type: mongoose.Schema.Types.ObjectId, //how you pull from another db
+        type: mongoose.Schema.Types.ObjectId,
         required: true,
-        ref: 'user' //reference the user (name of other db) collection
+        ref: 'user'
     }
 }, {
-    timestamps: true //timestamps the post
+    timestamps: true
 })
 
-module.exports = mongoose.model('blogpost', blogpost); //first part is name of collection which will become plural, second value is schema created above
+module.exports = mongoose.model('blogpost', blogpost);

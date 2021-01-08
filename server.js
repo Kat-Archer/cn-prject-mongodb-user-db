@@ -181,6 +181,16 @@ app.get('/create', auth.isLoggedIn, (req, res) => {
     res.render('create');
 });
 
+app.post('/create', auth.isLoggedIn, async (req, res) => {
+    console.log(req.userFound._id);
+    await Blogpost.create({
+        title: req.body.title,
+        body: req.body.content,
+        user: req.userFound._id
+    });
+    res.send("Post Created");
+});
+
 //view
 app.get('/view', auth.isLoggedIn, (req, res) => {
     res.render('view');

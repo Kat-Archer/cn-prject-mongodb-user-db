@@ -10,7 +10,15 @@
 </head>
 <body>
     <h1>Create Blog Post</h1>
-    <a href="/register" ><button>Register</button></a><br />
-    <a href="/login" ><button>Login</button></a><br />
+    <div>
+        <form action="/create" method="POST" >
+            <label>Title: </label>
+            <input required type="text" name="title" ><br />
+            <textarea required name="content" rows="30" cols="150" placeholder="Write your content here"></textarea><br />
+            <button type="submit" >Submit</button>
+        </form>
+        
+        
+    </div>
 </body>
 </html>
