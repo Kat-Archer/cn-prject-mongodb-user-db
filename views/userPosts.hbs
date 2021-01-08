@@ -9,8 +9,25 @@
     <title>Document</title>
 </head>
 <body>
-    <h1>Veiw Blog Posts</h1>
-    <a href="/register" ><button>Register</button></a><br />
-    <a href="/login" ><button>Login</button></a><br />
+    <h1>{{this.name}}'s Blog Posts</h1>
+    <div>
+        <table>
+            <tr>
+                <th>Title</th>
+                <th>Preview</th>
+                <th>Created</th>
+            </tr>
+
+            {{#each userPosts}}
+            <tr>
+                <td>{{this.title}}</td>
+                <td>{{this.body}}</td>
+                <td>{{this.createdAt}}</td>
+            </tr>
+            {{/each}}
+
+        </table>
+    </div>
+
 </body>
 </html>

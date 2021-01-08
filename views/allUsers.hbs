@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+
+    <title>Document</title>
+</head>
+<body>
+    <h1>All Users</h1>
+    <div>
+        <table>
+            <tr>
+                <th>Name</th>
+                <th>email</th>
+                <th></th>
+                <th></th>
+            </tr>
+        {{#if isAdmin}}
+        {{#each user}}
+            <tr>
+                <td>{{this.name}}</td>
+                <td>{{this.email}}</td>
+                <td><button>Edit</button></td>
+                <td><button>Delete</button></td>  
+            </tr>  
+        {{/each}}
+        {{else}}
+        {{#each user}}
+            <tr>
+                <td>{{this.name}}</td>
+                <td>{{this.email}}</td>
+            </tr>  
+        {{/each}}
+        {{/if}}
+        </table>
+    </div>
+</body>
+</html>

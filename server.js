@@ -103,8 +103,6 @@ app.post('/login', async (req, res) => {
 app.get('/profile', auth.isLoggedIn, (req, res) => {
     try{
         if(req.userFound) {
-            const userDB = req.userFound;
-
             res.render('profile', {
                 name: req.userFound.name,
                 email: req.userFound.email
@@ -192,19 +190,47 @@ app.post('/create', auth.isLoggedIn, async (req, res) => {
 });
 
 //userPosts
-app.get('/userPosts', auth.isLoggedIn, (req, res) => {
-    res.render('userPosts');
+app.get('/userPosts', auth.isLoggedIn, async (req, res) => {
+    const userPosts = await Blogpost.find({ user: req.userFound._id }).populate('user', 'name');
+    const name = await req.userFound.name;
+    res.render('userPosts', {
+        name: name,
+        userPosts: userPosts
+    });
 });
 
 //allPosts
 app.get('/allPosts', auth.isLoggedIn, async (req, res) => {
-    const allPosts = await Blogpost.find();
+    const allPosts = await Blogpost.find().populate('user', 'name');
+
+    for(let i = 0; i < allPosts.length; i++) {
+        allPosts[i].createdAt.toLocaleString("en-GB", {dateStyle: "full"});
+        console.log(allPosts[i].createdAt);
+        
+    }
+    
     res.render('allPosts', {
         allPosts: allPosts
     });
 });
 
+//allUsers
+app.get('/allUsers', auth.isLoggedIn, async (req, res) => {
+    let isAdmin;
+    if(req.userFound.admin){
+        isAdmin = true;
+    } else {
+        isAdmin = false
+    }
 
+    const userDB = await User.find();
+    // console.log(userDB);
+
+    res.render('allUsers', {
+        user: userDB,
+        isAdmin: isAdmin
+    });
+});
 
 //error handling
 app.get("*", (req, res) => {
