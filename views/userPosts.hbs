@@ -9,23 +9,25 @@
     <title>Document</title>
 </head>
 <body>
-    <h1>{{this.name}}'s Blog Posts</h1>
+    <h1>{{user.name}}'s Blog Posts</h1>
     <div>
         <table>
             <tr>
                 <th>Title</th>
                 <th>Preview</th>
                 <th>Created</th>
+                <th></th>
+                <th></th>
             </tr>
-
             {{#each userPosts}}
-            <tr>
-                <td>{{this.title}}</td>
-                <td>{{this.body}}</td>
-                <td>{{this.createdAt}}</td>
-            </tr>
+                <tr>
+                    <td>{{this.title}}</td>
+                    <td>{{this.body}}</td>
+                    <td>{{this.createdAt}}</td>
+                    <td><a href="/editPost/{{this.id}}" value={{this.id}} ><button>Edit</button></a></td>
+                    <td><a href="/deletePost/{{this.id}}" value={{this.id}} ><button>Delete</button></a></td>  
+                </tr>
             {{/each}}
-
         </table>
     </div>
 

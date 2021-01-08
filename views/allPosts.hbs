@@ -17,17 +17,30 @@
                 <th>Preview</th>
                 <th>Author</th>
                 <th>Created</th>
+                <th></th>
+                <th></th>
             </tr>
-
-            {{#each allPosts}}
-            <tr>
-                <td>{{this.title}}</td>
-                <td>{{this.body}}</td>
-                <td>{{this.user.name}}</td>
-                <td>{{this.createdAt}}</td>
-            </tr>
-            {{/each}}
-
+            {{#if isAdmin}}
+                {{#each allPosts}}
+                    <tr>
+                        <td>{{this.title}}</td>
+                        <td>{{this.body}}</td>
+                        <td>{{this.user.name}}</td>
+                        <td>{{this.createdAt}}</td>
+                        <td><button>Edit</button></td>
+                        <td><button>Delete</button></td>  
+                    </tr>
+                {{/each}}
+            {{else}}
+                 {{#each allPosts}}
+                    <tr>
+                        <td>{{this.title}}</td>
+                        <td>{{this.body}}</td>
+                        <td>{{this.user.name}}</td>
+                        <td>{{this.createdAt}}</td> 
+                    </tr>
+                {{/each}}
+            {{/if}}
         </table>
     </div>
 

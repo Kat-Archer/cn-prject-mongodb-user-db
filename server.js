@@ -49,7 +49,6 @@ app.post('/register', async (req, res) => {
     } else {
         //check that the email does not already exist
         const alreadyExists = await User.find({email: req.body.userEmail});
-        console.log(alreadyExists)
         
         if (alreadyExists.length > 0) {
             res.render("register", {
@@ -143,16 +142,12 @@ app.get('/password', auth.isLoggedIn, (req, res) => {
 
 app.post('/password', auth.isLoggedIn, async (req, res) => {
     const isMatch = await bcrypt.compare(req.body.oldPassword, req.userFound.password );
-    console.log(isMatch);
     if (isMatch) {
-        console.log("match");
         if (req.body.newPassword !== req.body.confirmPassword) {
-            console.log("no Match");
             res.render("password", {
                 error: "The passwords do not match"
             })
         } else {
-            console.log("changing");
             const hashedPassword = await bcrypt.hash(req.body.newPassword, 13);
             await User.findByIdAndUpdate(req.userFound._id, {
                 password: hashedPassword
@@ -180,7 +175,6 @@ app.get('/create', auth.isLoggedIn, (req, res) => {
 });
 
 app.post('/create', auth.isLoggedIn, async (req, res) => {
-    console.log(req.userFound._id);
     await Blogpost.create({
         title: req.body.title,
         body: req.body.content,
@@ -199,18 +193,50 @@ app.get('/userPosts', auth.isLoggedIn, async (req, res) => {
     });
 });
 
+//editPost
+app.get('/editPost/:id', auth.isLoggedIn, async (req, res) => {
+    const post = await Blogpost.findById(req.params.id);
+    console.log(post);
+    res.render("editPost",{
+        post: post
+    });
+}); //for some reason not pulling full title?!?! Only pulling first word
+
+app.post('/editPost/:id', auth.isLoggedIn, async (req, res) => {//not working
+    await Blogpost.findByIdAndUpdate(req.params._id, {
+        title: req.body.title,
+        body: req.body.content,
+        user: req.userFound._id
+    });
+    res.send("blog has been updated");
+});
+
+//deletePost
+app.get('/deletePost/:id', auth.isLoggedIn, async (req, res) => {
+    await Blogpost.findByIdAndDelete(req.params.id);
+    res.send("Post has been deleted");
+});
+
 //allPosts
 app.get('/allPosts', auth.isLoggedIn, async (req, res) => {
+    let isAdmin;
+    if(req.userFound.admin){
+        isAdmin = true;
+    } else {
+        isAdmin = false
+    }
+
     const allPosts = await Blogpost.find().populate('user', 'name');
 
-    for(let i = 0; i < allPosts.length; i++) {
-        allPosts[i].createdAt.toLocaleString("en-GB", {dateStyle: "full"});
-        console.log(allPosts[i].createdAt);
+    // for(let i = 0; i < allPosts.length; i++) {
+    //     allPosts[i].createdAt.toLocaleString("en-GB", {dateStyle: "full"});
+    //     console.log(allPosts[i].createdAt);
         
-    }
+    // }
     
     res.render('allPosts', {
-        allPosts: allPosts
+        allPosts: allPosts,
+        isAdmin: isAdmin
     });
 });
 
@@ -224,7 +250,6 @@ app.get('/allUsers', auth.isLoggedIn, async (req, res) => {
     }
 
     const userDB = await User.find();
-    // console.log(userDB);
 
     res.render('allUsers', {
         user: userDB,
