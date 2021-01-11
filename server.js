@@ -223,7 +223,6 @@ app.post('/editPost/:id', auth.isLoggedIn, async (req, res) => {
     await Blogpost.findByIdAndUpdate(req.params.id, {
         title: req.body.title,
         body: req.body.content,
-        user: req.userFound._id
     });
     res.send("blog has been updated");
 });
@@ -250,7 +249,6 @@ app.get('/allPosts', auth.isLoggedIn, async (req, res) => {
         newAllPosts.push({
             blog: allPosts[i],
             date: newDate});
-        console.log(newAllPosts);
     }
     
     res.render('allPosts', {
@@ -261,7 +259,7 @@ app.get('/allPosts', auth.isLoggedIn, async (req, res) => {
 
 app.post('/allPosts', auth.isLoggedIn, async (req, res) => {//inprogress
     try{
-        await blogPost.findByIdAndDelete(req.body.deletepost);
+        await Blogpost.findByIdAndDelete(req.body.deletepost);
         res.send("Post has been deleted");
     } catch(error) {
         res.send("Cannot delete");
@@ -298,6 +296,28 @@ app.post('/allUsers', auth.isLoggedIn, async (req, res) => {
         res.send("Cannot delete");
     };
 });
+
+app.get('/editother/:id', auth.isLoggedIn, async (req, res) => {
+    const user = await User.findById(req.params.id);
+    res.render('editother',{
+        name: user.name,
+        email: user.email,
+        id: user._id 
+    });
+});
+
+app.post('/editother/:id', auth.isLoggedIn, async (req, res) => {
+    try{
+        await User.findByIdAndUpdate(req.params.id, {
+            name: req.body.userName,
+            email: req.body.userEmail
+        });
+        res.send("User has been updated");
+    } catch(error) {
+        res.send("That user does not exist");
+    };
+});
+
 
 //error handling
 app.get("*", (req, res) => {

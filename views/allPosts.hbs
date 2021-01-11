@@ -22,14 +22,14 @@
             </tr>
             {{#if isAdmin}}
                 {{#each newAllPosts}}
-                    <form>
+                    <form action="/allPosts" method="POST">
                         <tr>
                             <td>{{this.blog.title}}</td>
                             <td>{{this.blog.body}}</td>
                             <td>{{this.blog.user.name}}</td>
                             <td>{{this.date}}</td>
-                            <td><button>Edit</button></td>
-                            <td><button type="submit" name="deletepost" value={{this._id}} >Delete</button></td>  
+                            <td><button type="submit" name="editpost" value={{this.blog._id}} formaction="/editPost/{{this.blog._id}}">Edit</button></td>
+                            <td><button type="submit" name="deletepost" value={{this.blog._id}} >Delete</button></td>  
                         </tr>
                     </form>
                 {{/each}}

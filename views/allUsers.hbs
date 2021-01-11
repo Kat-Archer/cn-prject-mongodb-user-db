@@ -20,14 +20,15 @@
             </tr>
         {{#if isAdmin}}
             {{#each user}}
-                <form method="POST">
+                <form action="/allUsers" method="POST">
                     <tr>
                         <td>{{this.name}}</td>
                         <td>{{this.email}}</td>
-                        <td><a  ><button>Edit</button></a></td>
-                        <td><button type="submit" name="deleteuser" value={{this._id}} >Delete</button></td>  
-                    </tr> 
+                        <td><button type="submit" name="deleteuser" value={{this._id}} >Delete</button></td> 
                 </form> 
+                        <td><a href="/editother/{{this._id}}" ><button>Edit</button></a></td>
+                    </tr> 
+                
             {{/each}}
         {{else}}
             {{#each user}}
