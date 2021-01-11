@@ -61,7 +61,7 @@ app.post('/register', async (req, res) => {
                 email: req.body.userEmail,
                 password: hashedPassword
             });
-            res.send("User Registered"); //change to load profile page
+            res.render("login"); 
         }
     }   
 });
@@ -72,29 +72,34 @@ app.get('/login', (req, res) => {
 });
 
 app.post('/login', async (req, res) => { 
-    const user = await User.findOne({email: req.body.userEmail}); // finds full object
+    try{
+        const user = await User.findOne({email: req.body.userEmail}); // finds full object
 
-    const isMatch = await bcrypt.compare(req.body.userPassword, user.password ); //compares the two passwords and returns a boolean
+        const isMatch = await bcrypt.compare(req.body.userPassword, user.password ); //compares the two passwords and returns a boolean
 
-    if (isMatch) {
-        const token = jwt.sign( {id: user._id}, process.env.JWT_SECRET, { //jwt is jsonwebtoken which creates the unique token for the user which is then stored as a cookie in the browser
-            expiresIn: process.env.JWT_EXPIRES_IN
-        }); 
-        
-        console.log(token);
+    
+        if (isMatch) {
+            const token = jwt.sign( {id: user._id}, process.env.JWT_SECRET, { //jwt is jsonwebtoken which creates the unique token for the user which is then stored as a cookie in the browser
+                expiresIn: process.env.JWT_EXPIRES_IN
+            }); 
+            
+            console.log(token);
 
-        const cookieOptions = {
-            expires: new Date(
-                Date.now() + process.env.JWT_COOKIE_EXPIRES * 24 * 60 * 60 * 1000
-            ), 
-            httpOnly: true
+            const cookieOptions = {
+                expires: new Date(
+                    Date.now() + process.env.JWT_COOKIE_EXPIRES * 24 * 60 * 60 * 1000
+                ), 
+                httpOnly: true
+            }
+
+            res.cookie('jwt', token, cookieOptions); //creating the cookie on your browser(name of cookie, value of cookie, how long is cookie valid)
+
+            res.render("profile");
+        } else {
+            res.send("Your login details are incorrect"); //add to login page
         }
-
-        res.cookie('jwt', token, cookieOptions); //creating the cookie on your browser(name of cookie, value of cookie, how long is cookie valid)
-
-        res.redirect('profile'); //send to profile
-    } else {
-        res.send("Your login details are incorrect"); //add to login page
+    } catch(error) {
+        res.send("This user does not exist");
     }
 });
 
@@ -196,14 +201,14 @@ app.get('/userPosts', auth.isLoggedIn, async (req, res) => {
 //editPost
 app.get('/editPost/:id', auth.isLoggedIn, async (req, res) => {
     const post = await Blogpost.findById(req.params.id);
-    console.log(post);
+    console.log(post.title);
     res.render("editPost",{
         post: post
     });
-}); //for some reason not pulling full title?!?! Only pulling first word
+}); //to pull full title, enclose the double curlies in ""
 
-app.post('/editPost/:id', auth.isLoggedIn, async (req, res) => {//not working
-    await Blogpost.findByIdAndUpdate(req.params._id, {
+app.post('/editPost/:id', auth.isLoggedIn, async (req, res) => {
+    await Blogpost.findByIdAndUpdate(req.params.id, {
         title: req.body.title,
         body: req.body.content,
         user: req.userFound._id
