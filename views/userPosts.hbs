@@ -19,13 +19,13 @@
                 <th></th>
                 <th></th>
             </tr>
-            {{#each userPosts}}
+            {{#each newUserPosts}}
                 <tr>
-                    <td>{{this.title}}</td>
-                    <td>{{this.body}}</td>
-                    <td>{{this.createdAt}}</td>
-                    <td><a href="/editPost/{{this.id}}" value={{this.id}} ><button>Edit</button></a></td>
-                    <td><a href="/deletePost/{{this.id}}" value={{this.id}} ><button>Delete</button></a></td>  
+                    <td>{{this.blog.title}}</td>
+                    <td>{{this.blog.body}}</td>
+                    <td>{{this.date}}</td>
+                    <td><a href="/editPost/{{this.blog.id}}" value={{this.id}} ><button>Edit</button></a></td>
+                    <td><a href="/deletePost/{{this.blog.id}}" value={{this.id}} ><button>Delete</button></a></td>  
                 </tr>
             {{/each}}
         </table>

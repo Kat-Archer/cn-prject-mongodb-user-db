@@ -9,7 +9,7 @@
     <title>Document</title>
 </head>
 <body>
-    <h1>Blog Posts</h1>
+    <h1>All Blog Posts</h1>
     <div>
         <table>
             <tr>
@@ -21,23 +21,25 @@
                 <th></th>
             </tr>
             {{#if isAdmin}}
-                {{#each allPosts}}
-                    <tr>
-                        <td>{{this.title}}</td>
-                        <td>{{this.body}}</td>
-                        <td>{{this.user.name}}</td>
-                        <td>{{this.createdAt}}</td>
-                        <td><button>Edit</button></td>
-                        <td><button>Delete</button></td>  
-                    </tr>
+                {{#each newAllPosts}}
+                    <form>
+                        <tr>
+                            <td>{{this.blog.title}}</td>
+                            <td>{{this.blog.body}}</td>
+                            <td>{{this.blog.user.name}}</td>
+                            <td>{{this.date}}</td>
+                            <td><button>Edit</button></td>
+                            <td><button type="submit" name="deletepost" value={{this._id}} >Delete</button></td>  
+                        </tr>
+                    </form>
                 {{/each}}
             {{else}}
-                 {{#each allPosts}}
+                 {{#each newAllPosts}}
                     <tr>
-                        <td>{{this.title}}</td>
-                        <td>{{this.body}}</td>
-                        <td>{{this.user.name}}</td>
-                        <td>{{this.createdAt}}</td> 
+                        <td>{{this.blog.title}}</td>
+                        <td>{{this.blog.body}}</td>
+                        <td>{{this.blog.user.name}}</td>
+                        <td>{{this.date}}</td> 
                     </tr>
                 {{/each}}
             {{/if}}

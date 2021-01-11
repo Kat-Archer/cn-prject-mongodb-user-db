@@ -94,7 +94,7 @@ app.post('/login', async (req, res) => {
 
             res.cookie('jwt', token, cookieOptions); //creating the cookie on your browser(name of cookie, value of cookie, how long is cookie valid)
 
-            res.render("profile");
+            res.redirect("profile");
         } else {
             res.send("Your login details are incorrect"); //add to login page
         }
@@ -168,6 +168,11 @@ app.post('/password', auth.isLoggedIn, async (req, res) => {
 app.get('/delete', auth.isLoggedIn, async (req, res) => {
     try{
         await User.findByIdAndDelete(req.userFound._id);
+        const posts = await Blogpost.find({ user: req.userFound._id });
+        for (let i = 0; i < posts.length; i++) {
+            await Blogpost.findByIdAndDelete(posts[i]._id);
+        };
+        console.log("blog has been deleted");
         res.send("User has been deleted");
     } catch(error) {
         res.send("That user does not exist");
@@ -185,16 +190,23 @@ app.post('/create', auth.isLoggedIn, async (req, res) => {
         body: req.body.content,
         user: req.userFound._id
     });
-    res.send("Post Created");
+    res.redirect("profile");
 });
 
 //userPosts
 app.get('/userPosts', auth.isLoggedIn, async (req, res) => {
     const userPosts = await Blogpost.find({ user: req.userFound._id }).populate('user', 'name');
     const name = await req.userFound.name;
+    const newUserPosts = [];
+    for(let i = 0; i < userPosts.length; i++) {
+        const newDate = userPosts[i].createdAt.toLocaleString("en-GB", {dateStyle: "full", timeStyle: "short" });
+        newUserPosts.push({
+            blog: userPosts[i],
+            date: newDate});
+    }
     res.render('userPosts', {
         name: name,
-        userPosts: userPosts
+        newUserPosts: newUserPosts
     });
 });
 
@@ -232,17 +244,28 @@ app.get('/allPosts', auth.isLoggedIn, async (req, res) => {
     }
 
     const allPosts = await Blogpost.find().populate('user', 'name');
-
-    // for(let i = 0; i < allPosts.length; i++) {
-    //     allPosts[i].createdAt.toLocaleString("en-GB", {dateStyle: "full"});
-    //     console.log(allPosts[i].createdAt);
-        
-    // }
+    const newAllPosts = [];
+    for(let i = 0; i < allPosts.length; i++) {
+        const newDate = allPosts[i].createdAt.toLocaleString("en-GB", {dateStyle: "full", timeStyle: "short" });
+        newAllPosts.push({
+            blog: allPosts[i],
+            date: newDate});
+        console.log(newAllPosts);
+    }
     
     res.render('allPosts', {
-        allPosts: allPosts,
+        newAllPosts: newAllPosts,
         isAdmin: isAdmin
     });
+});
+
+app.post('/allPosts', auth.isLoggedIn, async (req, res) => {//inprogress
+    try{
+        await blogPost.findByIdAndDelete(req.body.deletepost);
+        res.send("Post has been deleted");
+    } catch(error) {
+        res.send("Cannot delete");
+    };
 });
 
 //allUsers
@@ -260,6 +283,20 @@ app.get('/allUsers', auth.isLoggedIn, async (req, res) => {
         user: userDB,
         isAdmin: isAdmin
     });
+});
+
+app.post('/allUsers', auth.isLoggedIn, async (req, res) => { 
+    try{
+        await User.findByIdAndDelete(req.body.deleteuser);
+        const posts = await Blogpost.find({ user: req.body.deleteuser });
+        for (let i = 0; i < posts.length; i++) {
+            await Blogpost.findByIdAndDelete(posts[i]._id);
+        };
+        console.log("blog has been deleted");
+        res.send("User has been deleted");
+    } catch(error) {
+        res.send("Cannot delete");
+    };
 });
 
 //error handling
