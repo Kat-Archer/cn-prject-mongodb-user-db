@@ -67,8 +67,15 @@ app.post('/register', async (req, res) => {
 });
 
 //logging in
-app.get('/login', (req, res) => {
-    res.render('login');
+app.get('/login', auth.isLoggedIn, (req, res) => {
+    if(req.userFound) {
+        res.render('profile', {
+            name: req.userFound.name,
+            email: req.userFound.email
+        });
+    } else{
+        res.render('login');
+    }
 });
 
 app.post('/login', async (req, res) => { 
@@ -96,10 +103,14 @@ app.post('/login', async (req, res) => {
 
             res.redirect("profile");
         } else {
-            res.send("Your login details are incorrect"); //add to login page
+            res.render("login", {
+                error: "Your login details are incorrect"
+            });
         }
     } catch(error) {
-        res.send("This user does not exist");
+        res.render("login", {
+            error: "This user does not exist"
+        });
     }
 });
 
@@ -109,13 +120,13 @@ app.get('/profile', auth.isLoggedIn, (req, res) => {
         if(req.userFound) {
             res.render('profile', {
                 name: req.userFound.name,
-                email: req.userFound.email
+                email: req.userFound.email,
             });
         } else {
-            res.send("You are not logged in");
+            res.render("login");
         }
     } catch(error) {
-        res.send("User not found");
+        res.render("login");
     };
 });
 
@@ -128,16 +139,11 @@ app.get('/edit', auth.isLoggedIn, (req, res) => {
 });
 
 app.post('/edit', auth.isLoggedIn, async (req, res) => {
-    // console.log(req.userFound._id)
-    try{
-        await User.findByIdAndUpdate(req.userFound._id, {
-            name: req.body.userName,
-            email: req.body.userEmail,
-        });
-        res.send("User has been updated");
-    } catch(error) {
-        res.send("That user does not exist");
-    };
+    await User.findByIdAndUpdate(req.userFound._id, {
+        name: req.body.userName,
+        email: req.body.userEmail,
+    });
+    res.redirect("profile");
 });
 
 //edit password
@@ -157,16 +163,17 @@ app.post('/password', auth.isLoggedIn, async (req, res) => {
             await User.findByIdAndUpdate(req.userFound._id, {
                 password: hashedPassword
             });
-        res.send("password changed") 
+        res.redirect("profile") 
         }
     } else {
-        res.send("Password incorrect");
+        res.render("password", {
+            error: "Password incorrect"
+        });
     }
 });
 
 //delete
 app.get('/delete', auth.isLoggedIn, async (req, res) => {
-    try{
         await User.findByIdAndDelete(req.userFound._id);
         const posts = await Blogpost.find({ user: req.userFound._id });
         for (let i = 0; i < posts.length; i++) {
@@ -174,9 +181,6 @@ app.get('/delete', auth.isLoggedIn, async (req, res) => {
         };
         console.log("blog has been deleted");
         res.send("User has been deleted");
-    } catch(error) {
-        res.send("That user does not exist");
-    };
 });
 
 //create
@@ -213,7 +217,6 @@ app.get('/userPosts', auth.isLoggedIn, async (req, res) => {
 //editPost
 app.get('/editPost/:id', auth.isLoggedIn, async (req, res) => {
     const post = await Blogpost.findById(req.params.id);
-    console.log(post.title);
     res.render("editPost",{
         post: post
     });
@@ -297,6 +300,7 @@ app.post('/allUsers', auth.isLoggedIn, async (req, res) => {
     };
 });
 
+//edit other user
 app.get('/editother/:id', auth.isLoggedIn, async (req, res) => {
     const user = await User.findById(req.params.id);
     res.render('editother',{

@@ -10,26 +10,26 @@
 </head>
 <body>
     <h1>All Blog Posts</h1>
-    <div>
-        <table>
+    <div id="table-container" >
+        <table id="table">
             <tr>
-                <th>Title</th>
-                <th>Preview</th>
-                <th>Author</th>
-                <th>Created</th>
-                <th></th>
-                <th></th>
+                <th class="table-style">Title</th>
+                <th class="table-style">Preview</th>
+                <th class="table-style">Author</th>
+                <th class="table-style">Created</th>
+                <th class="table-style"></th>
+                <th class="table-style"></th>
             </tr>
             {{#if isAdmin}}
                 {{#each newAllPosts}}
                     <form action="/allPosts" method="POST">
                         <tr>
-                            <td>{{this.blog.title}}</td>
-                            <td>{{this.blog.body}}</td>
-                            <td>{{this.blog.user.name}}</td>
-                            <td>{{this.date}}</td>
-                            <td><button type="submit" name="editpost" value={{this.blog._id}} formaction="/editPost/{{this.blog._id}}">Edit</button></td>
-                            <td><button type="submit" name="deletepost" value={{this.blog._id}} >Delete</button></td>  
+                            <td class="table-style">{{this.blog.title}}</td>
+                            <td class="table-style">{{this.blog.body}}</td>
+                            <td class="table-style">{{this.blog.user.name}}</td>
+                            <td class="table-style">{{this.date}}</td>
+                            <td class="table-style"><button type="submit" name="editpost" value={{this.blog._id}} formaction="/editPost/{{this.blog._id}}">Edit</button></td>
+                            <td class="table-style"><button type="submit" name="deletepost" value={{this.blog._id}} >Delete</button></td>  
                         </tr>
                     </form>
                 {{/each}}
